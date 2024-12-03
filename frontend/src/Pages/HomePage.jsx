@@ -17,9 +17,10 @@ const HomePage = () => {
             Shorten your long URLs, share effortlessly, and track every click
             with advanced analytics.
           </p>
-          <div className="bg-black text-white px-8 py-4 text-xl font-semibold rounded shadow-lg hover:bg-blue-100 transition cursor-pointer">
+          <button  className="bg-black text-white px-8 py-4 text-xl font-semibold rounded shadow-lg hover:bg-blue-100 transition cursor-pointer">
           <Link to='/signin'>Get Started</Link> 
-          </div>
+          </button>
+         
         </div>
         {/* Hero Image */}
         <div className="absolute inset-0 opacity-20">

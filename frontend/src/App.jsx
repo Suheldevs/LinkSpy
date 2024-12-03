@@ -5,6 +5,8 @@ import HomePage from './Pages/HomePage'
 import Signin from './Pages/SignIn'
 import Header from './Components/Header'
 import Footer from './Components/Footer'
+import Login from './Pages/Login'
+import ViewAnalytics from './Pages/ViewAnalitics'
 
 function App() {
   return (
@@ -13,6 +15,9 @@ function App() {
     <Routes>
       <Route path='/' element={<HomePage/>}/>
       <Route path='/signin' element={<Signin/>}/>
+      <Route path='/login' element={<Login/>}/>
+      <Route path='/url' element={<Url/>}/>
+      <Route path='/analytics' element={<ViewAnalytics/>}/>
     </Routes>
     <Footer/>
     </BrowserRouter>

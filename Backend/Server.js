@@ -11,8 +11,10 @@ const mongodb = process.env.MONGODB
 
 
 const LinkRouter = require('./routes/LinkRouter')
+const UserRouter = require('./routes/UserRoute')
 
 app.use('/link',LinkRouter);
+app.use('/user',UserRouter);
 
 
 

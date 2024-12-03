@@ -55,8 +55,8 @@ const shortLinkGenrater = async (req, res) => {
 const redirectToOriginalUrl = async (req, res) => {
     try {
       const { shortUrl } = req.params; 
-      const link = await Link.findOne({ shortUrl:shortUrl });
-      console.log(link);
+      const link = await Link.findOne({shortUrl:shortUrl });
+      const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       if (!link) {
         return res.status(404).json({ message: 'Short URL not found' });
       }
@@ -64,7 +64,7 @@ const redirectToOriginalUrl = async (req, res) => {
       
       link.clickCount += 1;
       link.clicks.push({
-        ipAddress: req.ip,  
+        ipAddress: ip,  
         accessedAt: new Date(),  
       });
   

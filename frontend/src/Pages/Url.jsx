@@ -1,77 +1,133 @@
-import React, { useEffect, useState } from 'react'
-import {Button, Label, TextInput,Table} from 'flowbite-react'
+import React, { useEffect, useState } from 'react';
+import { Button, Label, TextInput, Table, Alert, Clipboard } from 'flowbite-react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
+import { FaClipboard, FaShareAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 function Url() {
-const backendUrl = import.meta.env.VITE_BACKENDURL;
-const [linksData,setLinksData] = useState([])
-const HandleNewUrl = async(e)=>{
-    e.preventDefault();
-    const formData = {email:'mohdsuhel.dev@gmail.com',originalUrl:e.target.url.value};
-    try{
-        const res = await axios.post(`${backendUrl}/link/url`,formData);
-        console.log(res);
-    }
-    catch(err){
-        console.log(err);
-    }
-    
-}
-useEffect(()=>{
-    getData();
-},[])
-const getData = async()=>{
-    try{
-        const res = await axios.get(`${backendUrl}/link/data/mohdsuhel.dev@gmail.com`);
-        console.log(res.data);
-        setLinksData(res.data.LinkData);
-    }
-    catch(err){
-console.log(err);
-    }
-}
+  const navigate = useNavigate();
+  const backendUrl = import.meta.env.VITE_BACKENDURL;
+  const [linksData, setLinksData] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const userData = location.state || {};
 
+  const handleNewUrl = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const formData = { email: `${userData.email}`, originalUrl: e.target.url.value };
+
+    try {
+      const res = await axios.post(`${backendUrl}/link/url`, formData);
+      console.log(res);
+      e.target.reset();
+      getData();
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Failed to create the link. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${backendUrl}/link/data/${userData.email}`);
+      console.log(res.data);
+      setLinksData(res.data.LinkData);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to fetch links. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleShare = (shortUrl) => {
+ 
+      if (navigator.share) {
+        navigator.share({
+          title: 'Check out this link!',
+          text: `Check out this awesome link:`,
+          url: `${backendUrl}/link/${shortUrl}`, // The URL to be shared
+        })
+          .then(() => console.log('Successfully shared!'))
+          .catch((err) => console.error('Error sharing:', err));
+      } else {
+        alert('Web Share API is not supported in this browser.');
+      }
+    
+  };
 
   return (
-    <div className='flex justify-center flex-col items-center min-h-[80vh]'>
-        <form className='flex gap-4 justify-center items-center shadow-lg p-10' onSubmit={HandleNewUrl}>
-            <div className=''>
-        <Label value='Create a new link'/>
-        <TextInput type='url' name="url" placeholder='Type full url of your website' />
-            </div>
-        <Button type="submit">Submit</Button>
-        </form>
-        <div className="overflow-x-auto mt-4">
-      <Table striped className='table table-'>
-        <Table.Head>
-          <Table.HeadCell>original Url</Table.HeadCell>
-          <Table.HeadCell>Short Url</Table.HeadCell>
-          <Table.HeadCell>Clicks</Table.HeadCell>
-          <Table.HeadCell>
-            <span className="sr-only">Edit</span>
-          </Table.HeadCell>
-        </Table.Head>
-        <Table.Body className="divide-y">
-{linksData.map((item)=>(
+    <div className="flex justify-center flex-col items-center min-h-[80vh] px-4 bg-slate-100">
+      <form className="flex gap-4 flex-col justify-center items-center shadow-lg p-8 bg-white rounded-lg w-full max-w-md" onSubmit={handleNewUrl}>
+        <Label value="Create a new link" className="text-lg font-bold mb-2" />
+        <TextInput type="url" name="url" placeholder="Type full URL of your website" required className="w-full" />
+        <Button type="submit" className="w-full mt-4" color='dark'  disabled={loading}>
+          {loading ? 'Creating...' : 'Create'}
+        </Button>
+        {error && <Alert color="red" className="w-full mt-2">{error}</Alert>}
+      </form>
 
-          <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-            {item.originalUrl}
-            </Table.Cell>
-            <Table.Cell>{item.shortUrl}</Table.Cell>
-            <Table.Cell>{item.clickCount}</Table.Cell>
-            <Table.Cell>
-              <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                Edit
-              </a>
-            </Table.Cell>
-          </Table.Row>
-))}
-
-          </Table.Body>
+      <div className="overflow-x-auto mt-6 w-full max-w-4xl">
+        {linksData.length > 0 ? (
+          <Table striped>
+            <Table.Head>
+              <Table.HeadCell className='text-center'>Original URL</Table.HeadCell>
+              <Table.HeadCell className='text-center'>Short URL</Table.HeadCell>
+              <Table.HeadCell className='text-center'>Clicks</Table.HeadCell>
+              <Table.HeadCell className='text-center'>Actions</Table.HeadCell>
+            </Table.Head>
+            <Table.Body className="divide-y text-center">
+              {linksData.map((item) => (
+                <Table.Row key={item.shortUrl} className="bg-white dark:bg-gray-800">
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white ">
+                    <a href={item.originalUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      {item.originalUrl}
+                    </a>
+                  </Table.Cell>
+                  <Table.Cell className='flex gap-2 justify-center items-center'>
+                    <a href={`${backendUrl}/link/${item.shortUrl}`} target="_blank" rel="noopener noreferrer" className="text-cyan-600 hover:underline">
+                     {backendUrl}/link/{item.shortUrl}
+                    </a>
+                    <Clipboard valueToCopy="npm install flowbite-react" label={<FaClipboard />} className='bg-black hover:bg-gray-600 p-2'/>
+                    <Button
+                      size="xs"
+                      color="light"
+                      onClick={() => handleShare(item.shortUrl)}
+                      title="Share"
+                    >
+                      <FaShareAlt />
+                    </Button>
+                  </Table.Cell>
+                  <Table.Cell>{item.clickCount}</Table.Cell>
+                  <Table.Cell>
+                    <Button size="xs" color="light" onClick={() => navigate('/analytics', { state: { linkData: item } })}>
+                      View Analytics
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
           </Table>
+        ) : (
+          <div className="text-center mt-8 text-gray-600 text-lg">
+            No links created yet. Create a new one to get started!
           </div>
+        )}
+      </div>
     </div>
-  )
+  );
 }
 
-export default Url
+export default Url;

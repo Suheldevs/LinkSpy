@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Button, FileInput, Label, Spinner, TextInput } from 'flowbite-react';
 import { FaGoogle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import app from '../firebase';
-
+import axios from 'axios';
 function Signin() {
+    const backendUrl = import.meta.env.VITE_BACKENDURL;
     const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState(null);  
+    const [formData, setFormData] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         const password = e.target.password.value;
         if (password.toString().length < 6) {
@@ -22,14 +23,22 @@ function Signin() {
         if (password !== confirmPassword) {
             return setError('Password does not match!');
         }
-
-        const uploadedImage = URL.createObjectURL(e.target.image.files[0]);
         setFormData({
             name: name,
             email: e.target.email.value,
-            password: password,
-            image: uploadedImage,
+            password: password
         });
+        try {
+            const res = await axios.post(`${backendUrl}/user/signin`, formData)
+            if(res.status == 201){
+                 navigate('/login');
+                    
+            }
+        }
+        catch (err) {
+            setError(err.response.data.message);
+            console.log(err);
+        }
     };
 
     // Google authentication
@@ -46,23 +55,28 @@ function Signin() {
             setFormData({
                 name: user.displayName,
                 email: user.email,
-                password: 'Random-Pass', 
-                image: user.photoURL,
+                password:'123456'
             });
-        } catch (err) {
-            console.log(err);
-        }
+            if(formData){
+
+                try {
+                    const res = await axios.post(`${backendUrl}/user/signin`, formData)
+                    if(res){
+                        navigate('/url', { state: formData });     
+                    }
+                }
+                catch (err) {
+                    setError(err.response.data.message);
+                }
+            }
+            } catch (err) {
+                console.log(err);
+            }
     };
-
-
-    useEffect(() => {
-        if (formData) {
-            navigate('/user-details', { state: formData });
-        }
-    }, [formData, navigate]);  
+  
 
     return (
-        <div className="min-h-screen flex justify-center items-center bg-slate-50">
+        <div className="min-h-[85vh] flex justify-center items-center lg:px-0 px-4 bg-slate-50">
             <div className="lg:w-96 w-full px-6 bg-white shadow-lg rounded-lg">
                 <form className="my-4 flex flex-col gap-1" onSubmit={handleSubmit}>
                     <div className="text-center font-bold text-2xl m-4">Sign In</div>
@@ -74,7 +88,6 @@ function Signin() {
                     <Label value="Password" />
                     <TextInput type="password" className="mb-2" placeholder="Enter a Password" name="password" required />
                     <TextInput type="password" className="mb-2" placeholder="Confirm Password" name="confirmPassword" required />
-                    <FileInput type="file" className="mb-2" name="image" required />
                     <Button color="dark" type="submit" className="w-full my-2 mb-4" disabled={loading}>
                         {loading ? (
                             <>
@@ -90,10 +103,11 @@ function Signin() {
                                 <Spinner size="sm" /> &nbsp;<span> Processing..</span>
                             </>
                         ) : (
-                         <>   <FaGoogle size={'20px'} /> &nbsp; SIGN IN WITH GOOGLE </>
+                            <>   <FaGoogle size={'20px'} /> &nbsp; SIGN IN WITH GOOGLE </>
                         )}
                     </Button>
                 </form>
+                <div className=''>Have an Account? <Link to='/login' className='text-blue-700 hover:text-blue-600'>LOG IN</Link></div>
             </div>
         </div>
     );
