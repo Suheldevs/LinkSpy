@@ -3,11 +3,13 @@ const shortId = require('shortid');
 
 const shortLinkGenrater = async (req, res) => {
   try {
-    const { originalUrl } = req.body;
-    console.log(originalUrl);
+    const { originalUrl ,email} = req.body;
 
     if (!originalUrl) {
       return res.status(400).json({ message: 'Please provide a URL' });
+    }
+    if (!email) {
+      return res.status(400).json({ message: 'Please provide a Email' });
     }
 
     // Check if the original URL already exists in the database
@@ -29,6 +31,7 @@ const shortLinkGenrater = async (req, res) => {
 
     // Create and save the new URL
     const newUrl = new Link({
+      email,
       originalUrl,
       shortUrl,
     });
@@ -75,8 +78,24 @@ const redirectToOriginalUrl = async (req, res) => {
     }
   };
   
+//get Shorturl by email
+const shortUrlGetByEmail = async(req,res)=>{
+try{
+  const {email} = req.params;
+  if(!email){
+    return res.status(400).json({message:'Please provide a email'})
+  }
+  const links = await Link.find({email});
+  if (links.length === 0) {
+    return res.status(404).json({ message: 'No links found for the provided email' });
+  }
+  res.status(200).json({message:'Short url featch succefully',LinkData:links})
+}
+catch(err){
+  res.status(500).json({message:'Internal server Error',Error:err});
+}
+}
 
 
 
-
-module.exports = { shortLinkGenrater, redirectToOriginalUrl};
+module.exports = { shortLinkGenrater, redirectToOriginalUrl,shortUrlGetByEmail};

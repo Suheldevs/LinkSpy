@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const linkSchema = new mongoose.Schema({
+  email:{
+    type:String,
+    required:true,
+  },
   originalUrl: {
     type: String,
     required: true,
