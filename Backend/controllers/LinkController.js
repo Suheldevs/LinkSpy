@@ -20,7 +20,6 @@ const shortLinkGenrater = async (req, res) => {
 
     // Generate a short URL
     const shortUrl = shortId.generate();
-    console.log('Generated short URL:', shortUrl);
 
     // Check if the short URL already exists in the database
     const existingShortUrl = await Link.findOne({ shortUrl });
@@ -46,7 +45,6 @@ const shortLinkGenrater = async (req, res) => {
 
     res.status(400).json({ message: 'Error in creating URL' });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: 'Internal server error', Error: err });
   }
 };
@@ -73,7 +71,6 @@ const redirectToOriginalUrl = async (req, res) => {
   res.redirect(link.originalUrl);
 
     } catch (err) {
-      console.log(err);
       res.status(500).json({ message: 'Internal server error', error: err });
     }
   };

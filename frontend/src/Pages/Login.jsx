@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import app from '../firebase';
 import axios from 'axios';
-
+import Swal from 'sweetalert2'
 function Login() {
     const backendUrl = import.meta.env.VITE_BACKENDURL;
     const navigate = useNavigate();
@@ -29,6 +29,13 @@ function Login() {
             const res = await axios.post(`${backendUrl}/user/login`, { email, password });
             const user = res.data.userData;
             if (res.status === 200 || 201) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Log in Successfull!",
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
                 navigate('/url', { state: {user} });
             }
         } catch (err) {
@@ -56,6 +63,13 @@ function Login() {
                 const res = await axios.post(`${backendUrl}/user/login`, googleData);
                 const user = res.data.userData;
                 if (res) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Log in Successfull!",
+                        showConfirmButton: false,
+                        timer: 1500
+                      });
                     navigate('/url', { state: user });
                 }
             } catch (err) {
@@ -99,7 +113,7 @@ function Login() {
                         )}
                     </Button>
                 </form>
-                <div>
+                <div className='mb-1'>
                     Don't have an account?{' '}
                     <Link to="/signin" className="text-blue-700 hover:text-blue-600">
                         SIGN IN

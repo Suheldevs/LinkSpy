@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import app from '../firebase';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 function Signin() {
     const backendUrl = import.meta.env.VITE_BACKENDURL;
     const navigate = useNavigate();
@@ -30,14 +31,25 @@ function Signin() {
         });
         try {
             const res = await axios.post(`${backendUrl}/user/signin`, formData)
-            if(res.status == 201){
+            if(res.status == 201 || 200){
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Sign in Successfull!",
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
                  navigate('/login');
                     
             }
         }
         catch (err) {
             setError(err.response.data.message);
-            console.log(err);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong!"
+              });
         }
     };
 
@@ -57,19 +69,46 @@ function Signin() {
                 email: user.email,
                 password:'123456'
             });
+            console.log(formData);
             if(formData){
-
+console.log(formData)
                 try {
                     const res = await axios.post(`${backendUrl}/user/signin`, formData)
                     if(res){
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Sign in Successfull!",
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
                         navigate('/url', { state: formData });     
                     }
                 }
                 catch (err) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Google authentication went wrong!"
+                      });
                     setError(err.response.data.message);
+
                 }
             }
+            else{
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Google authentication went wrong!"
+                  });
+                setError(err.response.data.message);
+            }
             } catch (err) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong!"
+                  });
                 console.log(err);
             }
     };
@@ -107,7 +146,7 @@ function Signin() {
                         )}
                     </Button>
                 </form>
-                <div className=''>Have an Account? <Link to='/login' className='text-blue-700 hover:text-blue-600'>LOG IN</Link></div>
+                <div className='mb-1'>Have an Account? <Link to='/login' className='text-blue-700 hover:text-blue-600'>LOG IN</Link></div>
             </div>
         </div>
     );

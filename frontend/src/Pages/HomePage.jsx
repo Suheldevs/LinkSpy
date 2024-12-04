@@ -5,10 +5,10 @@ const HomePage = () => {
   return (
     <div className="">
       {/* Header Section */}
-     
+
 
       {/* Hero Section */}
-      <section className="relative py-20">
+      <section className="relative py-20 ">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl font-extrabold mb-6">
             Transform Your Links. Analyze Your Data.
@@ -17,10 +17,8 @@ const HomePage = () => {
             Shorten your long URLs, share effortlessly, and track every click
             with advanced analytics.
           </p>
-          <button  className="bg-black text-white px-8 py-4 text-xl font-semibold rounded shadow-lg hover:bg-blue-100 transition cursor-pointer">
-          <Link to='/signin'>Get Started</Link> 
-          </button>
-         
+          
+
         </div>
         {/* Hero Image */}
         <div className="absolute inset-0 opacity-20">
@@ -31,7 +29,15 @@ const HomePage = () => {
           />
         </div>
       </section>
+      <div className="text-center">
 
+      <Link
+            to="/login"
+            className="bg-black text-center text-white px-8 py-4 text-xl font-semibold rounded shadow-lg hover:bg-gray-600 transition cursor-pointer"
+          >
+            Get Started
+          </Link>
+      </div>
       {/* Features Section */}
       <section className="py-20 bg-gray-100">
         <div className="container mx-auto px-4 text-center">
@@ -80,7 +86,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      
+
     </div>
   );
 };
