@@ -13,7 +13,7 @@ function Signin() {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState(null);
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const password = e.target.password.value;
         if (password.toString().length < 6) {
@@ -29,30 +29,34 @@ function Signin() {
             email: e.target.email.value,
             password: password
         });
-        if(formData.email){
-        try {
-            const res = await axios.post(`${backendUrl}/user/signin`, formData)
-            if(res.status == 201 || 200){
+        if (formData.email) {
+            try {
+                setLoading(true);
+                const res = await axios.post(`${backendUrl}/user/signin`, formData)
+                if (res.status == 201 || 200) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Sign in Successfull!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    navigate('/login');
+
+                }
+            }
+            catch (err) {
+                setError(err.response.data.message);
                 Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Sign in Successfull!",
-                    showConfirmButton: false,
-                    timer: 1500
-                  });
-                 navigate('/login');
-                    
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong!"
+                });
+            }
+            finally {
+                setLoading(fasle)
             }
         }
-        catch (err) {
-            setError(err.response.data.message);
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Something went wrong!"
-              });
-        }
-    }
     };
 
     // Google authentication
@@ -69,22 +73,23 @@ function Signin() {
             setFormData({
                 name: user.displayName,
                 email: user.email,
-                password:'123456'
+                password: '123456'
             });
             console.log(formData);
-            if(formData){
-console.log(formData)
+            if (formData) {
+                console.log(formData)
                 try {
+                    setLoading(false)
                     const res = await axios.post(`${backendUrl}/user/signin`, formData)
-                    if(res){
+                    if (res) {
                         Swal.fire({
                             position: "center",
                             icon: "success",
                             title: "Sign in Successfull!",
                             showConfirmButton: false,
                             timer: 1500
-                          });
-                        navigate('/url', { state: formData });     
+                        });
+                        navigate('/url', { state: formData });
                     }
                 }
                 catch (err) {
@@ -92,29 +97,32 @@ console.log(formData)
                         icon: "error",
                         title: "Oops...",
                         text: "Google authentication went wrong!"
-                      });
+                    });
                     setError(err.response.data.message);
 
                 }
+                finally{
+                    setLoading(fasle);
+                }
             }
-            else{
+            else {
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
                     text: "Google authentication went wrong!"
-                  });
+                });
                 setError(err.response.data.message);
             }
-            } catch (err) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Something went wrong!"
-                  });
-                console.log(err);
-            }
+        } catch (err) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong!"
+            });
+            console.log(err);
+        }
     };
-  
+
 
     return (
         <div className="min-h-[85vh] flex justify-center items-center lg:px-0 px-4 bg-slate-50">
