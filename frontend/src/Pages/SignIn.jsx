@@ -54,6 +54,7 @@ function Signin() {
                     title: "Oops...",
                     text: "Something went wrong!"
                 });
+                setLoading(fasle);
             }
             finally {
                 setLoading(fasle)
