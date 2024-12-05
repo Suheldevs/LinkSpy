@@ -1,5 +1,8 @@
 <h2>LinkSpy</h2>
 
+📧 **Email:** [mohdsuhel.dev@gmail.com]  
+🔗 **Live App:** [[Live](https://linkspy.netlify.app/)]  
+
 🚀 **LinkSpy** is a powerful web app that tracks the activity on your shared links, providing detailed analytics like total clicks, visitor IPs, and an interactive graph of daily visits. Perfect for anyone who wants to monitor link engagement and visitor insights in a secure and user-friendly way!
 
 ---
@@ -113,8 +116,7 @@ Contributions are welcome! Here's how you can get involved:
 
 If you have any questions, suggestions, or feedback, feel free to reach out:
 
-📧 **Email:** [your-email@example.com]  
-🔗 **Live App:** [[Add the deployed app link](https://linkspy.netlify.app/)]  
+
 
 Let’s make sharing and tracking links smarter with **LinkSpy**! 🌟
 
