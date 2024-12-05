@@ -28,7 +28,10 @@ if(email){
         try {
             const res = await axios.post(`${backendUrl}/user/login`, { email, password });
             const user = res.data.userData;
-            if (res.status === 200 || 201) {
+           if(user){
+            setError('Something went wrong!');
+           }
+            if ((res.status === 200 || 201 ) && (user)) {
                 Swal.fire({
                     position: "center",
                     icon: "success",

@@ -78,7 +78,7 @@ import Swal from 'sweetalert2';
                 });
                 navigate('/url', { state: { name: user.displayName, email: user.email } });
             } catch (err) {
-                setError('Google sign-in failed. Please try again.');
+                setError('Google sign-in failed. Or user exist! Please try again.');
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
