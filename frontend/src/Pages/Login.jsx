@@ -36,7 +36,12 @@ if(email){
                     showConfirmButton: false,
                     timer: 1500
                   });
+                  if(user.name){
                 navigate('/url', { state: {user} });
+                  }
+                  else{
+                    setError('something went wrong! Please log in Google')
+                  }
             }
         } catch (err) {
             setError(err.response?.data?.message || 'An error occurred. Please try again.');
