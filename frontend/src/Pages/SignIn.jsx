@@ -6,129 +6,88 @@ import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import app from '../firebase';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-function Signin() {
-    const backendUrl = import.meta.env.VITE_BACKENDURL;
-    const navigate = useNavigate();
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState(null);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true)
-        const password = e.target.password.value;
-        if (password.toString().length < 6) {
-            return setError('Password length must be 6 or more characters');
-        }
-        const name = e.target.name.value.trim();
-        const confirmPassword = e.target.confirmPassword.value;
-        if (password !== confirmPassword) {
-            return setError('Password does not match!');
-        }
-        setFormData({
-            name: name,
-            email: e.target.email.value,
-            password: password
-        });
-        console.log(formData);
-        setLoading(false)
-        if (formData.email) {
+    function Signin() {
+        const backendUrl = import.meta.env.VITE_BACKENDURL;
+        const navigate = useNavigate();
+        const [error, setError] = useState(null);
+        const [loading, setLoading] = useState(false);
+    
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            setError(null);
+            setLoading(true);
+    
+            const name = e.target.name.value.trim();
+            const email = e.target.email.value.trim();
+            const password = e.target.password.value;
+            const confirmPassword = e.target.confirmPassword.value;
+    
+            if (password.length < 6) {
+                setLoading(false);
+                return setError('Password length must be 6 or more characters');
+            }
+            if (password !== confirmPassword) {
+                setLoading(false);
+                return setError('Passwords do not match!');
+            }
+    
             try {
-                setLoading(true);
-                const res = await axios.post(`${backendUrl}/user/signin`, formData)
-                if (res.status == 201 || 200) {
-                    Swal.fire({
-                        position: "center",
-                        icon: "success",
-                        title: "Sign in Successfull!",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    setLoading(false)
-                    navigate('/login');
-
-                }
-            }
-            catch (err) {
-                setError(err.response.data.message);
+                const res = await axios.post(`${backendUrl}/user/signin`, { name, email, password });
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Sign in Successful!",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+                navigate('/login');
+            } catch (err) {
+                setError(err.response?.data?.message || 'Something went wrong!');
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
-                    text: "Something went wrong!"
+                    text: "Failed to sign in. Please try again.",
                 });
-                setLoading(fasle);
+            } finally {
+                setLoading(false);
             }
-            finally {
-                setLoading(fasle)
-            }
-        }
-        setLoading(fasle)
-    };
-
-    // Google authentication
-    const handleGoogleClick = async () => {
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-        provider.setCustomParameters({
-            prompt: 'select_account',
-        });
-        try {
-            const resultFromGoogle = await signInWithPopup(auth, provider);
-            const user = resultFromGoogle.user;
-            console.log(user);
-            setFormData({
-                name: user.displayName,
-                email: user.email,
-                password: '123456'
-            });
-            console.log(formData);
-            if (formData) {
-                console.log(formData)
-                try {
-                    setLoading(false)
-                    const res = await axios.post(`${backendUrl}/user/signin`, formData)
-                    if (res) {
-                        Swal.fire({
-                            position: "center",
-                            icon: "success",
-                            title: "Sign in Successfull!",
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        navigate('/url', { state: formData });
-                    }
-                }
-                catch (err) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Google authentication went wrong!"
-                    });
-                    setError(err.response.data.message);
-
-                }
-                finally{
-                    setLoading(fasle);
-                }
-            }
-            else {
+        };
+    
+        const handleGoogleClick = async () => {
+            setError(null);
+            setLoading(true);
+            const auth = getAuth(app);
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+    
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                const res = await axios.post(`${backendUrl}/user/signin`, {
+                    name: user.displayName,
+                    email: user.email,
+                    password: '123456',
+                });
+    
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Sign in Successful!",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+                navigate('/url', { state: { name: user.displayName, email: user.email } });
+            } catch (err) {
+                setError('Google sign-in failed. Please try again.');
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
-                    text: "Google authentication went wrong!"
+                    text: "Failed to sign in with Google.",
                 });
-                setError(err.response.data.message);
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Something went wrong!"
-            });
-            console.log(err);
-        }
-    };
-
+        };
 
     return (
         <div className="min-h-[85vh] flex justify-center items-center lg:px-0 px-4 bg-slate-50">
