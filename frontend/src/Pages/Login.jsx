@@ -24,13 +24,13 @@ function Login() {
             setLoading(false);
             return setError('Password length must be 6 or more characters');
         }
-
+if(email){
         try {
             const res = await axios.post(`${backendUrl}/user/login`, { email, password });
             const user = res.data.userData;
             if (res.status === 200 || 201) {
                 Swal.fire({
-                    position: "top-end",
+                    position: "center",
                     icon: "success",
                     title: "Log in Successfull!",
                     showConfirmButton: false,
@@ -43,6 +43,7 @@ function Login() {
         } finally {
             setLoading(false);
         }
+    }
     };
 
     const handleGoogleClick = async () => {
@@ -64,9 +65,9 @@ function Login() {
                 const user = res.data.userData;
                 if (res) {
                     Swal.fire({
-                        position: "top-end",
+                        position: "center",
                         icon: "success",
-                        title: "Log in Successfull!",
+                        title: "Log in successfull!",
                         showConfirmButton: false,
                         timer: 1500
                       });

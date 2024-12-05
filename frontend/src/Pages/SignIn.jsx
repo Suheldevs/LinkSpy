@@ -29,11 +29,12 @@ function Signin() {
             email: e.target.email.value,
             password: password
         });
+        if(formData.email){
         try {
             const res = await axios.post(`${backendUrl}/user/signin`, formData)
             if(res.status == 201 || 200){
                 Swal.fire({
-                    position: "top-end",
+                    position: "center",
                     icon: "success",
                     title: "Sign in Successfull!",
                     showConfirmButton: false,
@@ -51,6 +52,7 @@ function Signin() {
                 text: "Something went wrong!"
               });
         }
+    }
     };
 
     // Google authentication
@@ -76,7 +78,7 @@ console.log(formData)
                     const res = await axios.post(`${backendUrl}/user/signin`, formData)
                     if(res){
                         Swal.fire({
-                            position: "top-end",
+                            position: "center",
                             icon: "success",
                             title: "Sign in Successfull!",
                             showConfirmButton: false,

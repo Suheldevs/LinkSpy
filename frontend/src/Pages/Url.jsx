@@ -19,15 +19,15 @@ function Url() {
     setLoading(true);
     setError(null);
     const formData = { email: `${userData.email}`, originalUrl: e.target.url.value };
-
+if(formData.email){
     try {
       const res = await axios.post(`${backendUrl}/link/url`, formData);
       Swal.fire({
-        position: "top-end",
+        position: "center",
         icon: "success",
         title: "Your Link has been Created Please use Short Url for Analitics",
         showConfirmButton: false,
-        timer: 1500
+        timer: 2000
       });
       e.target.reset();
       getData();
@@ -37,6 +37,7 @@ function Url() {
     } finally {
       setLoading(false);
     }
+  }
   };
 
   useEffect(() => {
