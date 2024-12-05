@@ -30,6 +30,8 @@ function Signin() {
             email: e.target.email.value,
             password: password
         });
+        console.log(formData);
+        setLoading(false)
         if (formData.email) {
             try {
                 setLoading(true);
