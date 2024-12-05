@@ -15,6 +15,7 @@ function Signin() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true)
         const password = e.target.password.value;
         if (password.toString().length < 6) {
             return setError('Password length must be 6 or more characters');
@@ -41,6 +42,7 @@ function Signin() {
                         showConfirmButton: false,
                         timer: 1500
                     });
+                    setLoading(false)
                     navigate('/login');
 
                 }
@@ -57,6 +59,7 @@ function Signin() {
                 setLoading(fasle)
             }
         }
+        setLoading(fasle)
     };
 
     // Google authentication
