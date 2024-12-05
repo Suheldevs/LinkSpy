@@ -120,6 +120,3 @@ If you have any questions, suggestions, or feedback, feel free to reach out:
 
 Let’s make sharing and tracking links smarter with **LinkSpy**! 🌟
 
---- 
-
-Feel free to modify the placeholders like your email, GitHub repo link, and live app link as needed.
